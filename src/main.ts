@@ -10,6 +10,10 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      transform:true, //permiso para conversion string to int pagination
+      transformOptions:{
+        enableImplicitConversion:true,//permiso para conversion string to int pagination
+      }
     })
   );
   await app.listen(3000);
