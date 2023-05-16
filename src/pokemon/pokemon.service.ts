@@ -5,13 +5,19 @@ import { Model, isValidObjectId } from 'mongoose';
 import { Pokemon } from './entities/pokemon.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginationDto } from '../common/dto/pagination.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PokemonService {
+  private defaultLimit: number;
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
-  ) { }
+    private readonly configService: ConfigService,//para usar el configService debemos de importar ConfigModule en pokemon.module.ts
+  ) {
+    this.defaultLimit = configService.get<number>('defaultLimit');
+  console.log({defaultLimit:configService.get<number>('defaultLimit')})
+  }
 
 
 
@@ -30,16 +36,16 @@ export class PokemonService {
     }
   }
 
-  findAll(paginationDto:PaginationDto) {
-    const {limit=10, offset=0 }= paginationDto;
-    console.log("limit: ", limit, "offset: ",offset)
+  findAll(paginationDto: PaginationDto) {
+    const { limit = this.defaultLimit, offset = 0 } = paginationDto;
+    // console.log("limit: ", limit, "offset: ", offset)
     return this.pokemonModel.find()
-    .limit(limit)//cuantos traer
-    .skip(offset)//salto
-    .sort({
-      no:1
-    })
-    .select('-__v')
+      .limit(limit)//cuantos traer
+      .skip(offset)//salto
+      .sort({
+        no: 1
+      })
+      .select('-__v')
     // return `This action returns all pokemon`;
   }
 
